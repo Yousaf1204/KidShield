@@ -1,89 +1,85 @@
-KidShield - Android Parental Control Application
-<!-- You can upload your app icon to a service like Imgur and place the link here -->
+# KidShield — Android Parental Control Application
 
-KidShield is a powerful, open-source parental control application for Android. It is designed to provide parents with essential tools to monitor their children's device usage and ensure their safety in the digital world. The application uses a robust, unstoppable background service to provide reliable, real-time monitoring.
+KidShield is a powerful, open-source parental control solution designed for Android devices. It empowers parents to monitor their children's digital activity, enforce usage boundaries, and ensure online safety with minimal impact on device performance.
 
-⚠️ Disclaimer: For Educational Purposes Only
-This application is intended for educational purposes only. It demonstrates advanced Android concepts, including background services, permissions, and integration with Firebase.
+> **⚠️ Educational Use Only**
+> This project is intended for educational purposes to demonstrate advanced Android concepts such as persistent background services, permissions, and Firebase integration. Do not use this application for unlawful or unethical monitoring. Only install it on devices you own or have explicit permission to monitor. The developers assume no responsibility for misuse.
 
-Do not use this application for any illegal or unethical activities. The user of this software is solely responsible for complying with all applicable local, state, and federal laws. The developers of this application assume no liability and are not responsible for any misuse or damage caused by this program. Only install this application on devices that you own or have explicit, legal permission to monitor.
+---
 
-Features
-Real-time Location Tracking: Get frequent updates on the child's geographical location, displayed on an interactive map.
+## ✨ Features
 
-App Blocker: View a list of all applications installed on the child's device and block or unblock them with a single tap from the parent's dashboard.
+* **Real-time Location Tracking**
+  Receive frequent location updates and visualize the child's position on an interactive map.
 
-Call & SMS Log Monitoring: Securely access the child's call and SMS history to stay informed about their communications.
+* **App Blocker**
+  View and remotely block/unblock installed applications on the child's device.
 
-Persistent Background Service: The application runs a lightweight, unstoppable foreground service that cannot be easily terminated by the user or the OS, ensuring constant protection.
+* **Call & SMS Log Monitoring**
+  Securely access communication logs to stay informed.
 
-Automatic Restart: The monitoring service automatically restarts when the device is rebooted.
+* **Persistent Background Service**
+  Runs as a foreground service that resists termination by the system or user.
 
-Architecture Overview
-KidShield employs a modern, hybrid architecture to ensure reliability and battery efficiency:
+* **Auto-Restart on Boot**
+  Ensures the monitoring service restarts automatically after device reboot.
 
-Persistent Foreground Service: A lightweight service runs 24/7 with a non-removable notification. Its only job is to perform a fast, frequent loop (every 2 seconds) to check if the currently used app is on the blocked list. This ensures immediate blocking action with minimal resource usage.
+---
 
-AlarmManager for Data Syncs: All heavy data synchronization tasks (location, call logs, SMS logs) are offloaded to the Android AlarmManager. This core system component wakes the device at a set interval (e.g., every 1-5 minutes), tells the service to perform a data sync, and then lets the device rest. This is the most robust and battery-efficient method for periodic tasks.
+## 🚀 Architecture Overview
 
-This combination prevents the service from being killed by the OS and provides the perfect balance between real-time responsiveness and battery conservation.
+KidShield is built using a modern hybrid architecture optimized for reliability and battery efficiency:
 
-Screenshots
+* **Persistent Foreground Service**
+  Executes every 2 seconds to check if the currently active app is in the blocked list and takes immediate action.
 
-Parent Dashboard
-<img width="245" height="435" alt="image" src="https://github.com/user-attachments/assets/c34d5b24-09a8-41d0-9b03-fc1af5c20534" />
+* **AlarmManager for Periodic Sync**
+  Handles heavier sync tasks (location, SMS, call logs) every 1-5 minutes for optimal power usage.
 
-Child Detail View
-<img width="246" height="429" alt="image" src="https://github.com/user-attachments/assets/02582bde-12cd-478e-84ae-e105782d145e" />
+---
 
-App Blocker
+## 🖼️ Screenshots
 
-<img width="232" height="398" alt="image" src="https://github.com/user-attachments/assets/1323d88a-f1bd-43bf-8482-c0740886a3eb" />
-<img width="240" height="433" alt="image" src="https://github.com/user-attachments/assets/e889fb81-ebf5-4f7f-98c6-8e2f26fb0e74" />
+### Parent Dashboard
 
+<img width="245" height="435" alt="Parent Dashboard" src="https://github.com/user-attachments/assets/c34d5b24-09a8-41d0-9b03-fc1af5c20534" />
 
+### Child Detail View
 
+<img width="246" height="429" alt="Child Detail View" src="https://github.com/user-attachments/assets/02582bde-12cd-478e-84ae-e105782d145e" />
 
+### App Blocker
 
+<img width="232" height="398" alt="App Blocker" src="https://github.com/user-attachments/assets/1323d88a-f1bd-43bf-8482-c0740886a3eb" />
+<img width="240" height="433" alt="App Blocker" src="https://github.com/user-attachments/assets/e889fb81-ebf5-4f7f-98c6-8e2f26fb0e74" />
 
+---
 
-#Project Setup Guide
-To get this project running, you will need to set up your own Firebase backend and Google Maps API key.
+## 📖 Project Setup Guide
 
-Prerequisites
-Android Studio (latest version recommended)
+### Prerequisites
 
-A physical Android device for testing (emulators may not fully support all features like device admin).
+* Android Studio (latest recommended)
+* Physical Android device (emulators may not support all features)
 
-Step 1: Clone the Repository
-git clone [https://github.com/Yousaf1204/KidShield.git)
+### ✅ Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/Yousaf1204/KidShield.git
 cd KidShield
+```
 
-Step 2: Firebase Setup
-This project requires a Firebase project to handle authentication and data storage.
+### ✅ Step 2: Firebase Setup
 
-Create a Firebase Project:
+1. Go to [Firebase Console](https://console.firebase.google.com/).
+2. Create a new project.
+3. Enable **Email/Password** in Authentication settings.
+4. Set up **Realtime Database**:
 
-Go to the Firebase Console.
+   * Choose "Start in test mode"
+   * Set rules for authenticated access:
 
-Click on "Add project" and follow the on-screen instructions to create a new project.
-
-Set up Authentication:
-
-In your new project, go to the Authentication section.
-
-Click on the "Sign-in method" tab.
-
-Enable the "Email/Password" provider.
-
-Set up Realtime Database:
-
-Go to the Realtime Database section.
-
-Click "Create Database" and start in test mode.
-
-Important: After creation, go to the "Rules" tab and paste the following rules. These are more secure and ensure that only authenticated users can read/write their own data.
-
+```json
 {
   "rules": {
     "users": {
@@ -94,69 +90,51 @@ Important: After creation, go to the "Rules" tab and paste the following rules. 
     }
   }
 }
+```
 
-Add Android App to Firebase:
+5. Register your Android app in Firebase:
 
-On the project overview page, click the Android icon to add a new Android app.
+   * Use package name: `com.yousafdev.KidShield`
+   * Download `google-services.json` and place it in `KidShield/app/`
 
-Package Name: You must use the package name from this project, which is com.yousafdev.KidShield.
+### ✅ Step 3: Google Maps API Key
 
-Follow the steps and download the google-services.json file.
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Enable **Maps SDK for Android**
+3. Create and restrict an **API Key**:
 
-Add google-services.json to Project:
+   * Restrict to package `com.yousafdev.KidShield`
+   * Add your debug SHA-1 key
+4. Insert API key in `AndroidManifest.xml`:
 
-Switch your Android Studio project view from "Android" to "Project".
-
-Copy the google-services.json file you downloaded and paste it into the app directory of the project (KidShield/app/google-services.json).
-
-Step 3: Google Maps API Key
-To display the map in the parent's dashboard, you need a Google Maps API key.
-
-Go to Google Cloud Console:
-
-Navigate to the Google Cloud Console.
-
-Select the same project that was created by Firebase.
-
-Enable Maps SDK for Android:
-
-In the navigation menu, go to "APIs & Services" > "Library".
-
-Search for "Maps SDK for Android" and enable it for your project.
-
-Get Your API Key:
-
-Go to "APIs & Services" > "Credentials".
-
-Click "Create Credentials" > "API key".
-
-Copy the generated API key.
-
-Recommended: Restrict your API key to prevent unauthorized use. Click on the new key and under "Application restrictions," select "Android apps" and add the package name (com.yousafdev.KidShield) and the SHA-1 certificate fingerprint of your debug key.
-
-Add API Key to AndroidManifest.xml:
-
-Open the app/src/main/AndroidManifest.xml file.
-
-Find the following line:
-
+```xml
 <meta-data
     android:name="com.google.android.geo.API_KEY"
     android:value="YOUR_API_KEY_HERE" />
+```
 
-Replace "YOUR_API_KEY_HERE" with the API key you just copied.
+### ✅ Step 4: Build & Run
 
-Step 4: Build and Run
-You are now ready to build and run the application.
+* Connect your Android device
+* Run the project from Android Studio
+* Register as a parent and child to explore all features
 
-Connect your physical Android device.
+---
 
-Click the "Run" button in Android Studio.
+## 📝 License
 
-The app will install and launch on your device. You can now register a parent and a child account to test the full functionality.
+This project is licensed under the [MIT License](LICENSE).
 
-License
-This project is licensed under the MIT License. See the LICENSE file for details.
+---
 
-Contributing
-Contributions are welcome! If you have ideas for improvements or find any bugs, feel free to open an issue or submit a pull request.
+## 📈 Contributing
+
+We welcome all contributions! Feel free to:
+
+* Submit issues
+* Suggest improvements
+* Create pull requests to fix bugs or add features
+
+---
+
+Happy Monitoring! 🚀
