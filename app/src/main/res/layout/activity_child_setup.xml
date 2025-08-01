@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/kidshield_background_dark"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp"
+        tools:context=".Activities.ChildSetupActivity">
+
+        <TextView
+            android:id="@+id/textView_setup_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="One Last Step!"
+            android:textColor="@color/kidshield_text_primary"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView_setup_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="To keep you safe, KidShield needs some permissions to work correctly. Please enable all of the following."
+            android:textColor="@color/kidshield_text_secondary"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textView_setup_title" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout_permissions"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textView_setup_description">
+
+            <include layout="@layout/item_permission"
+                android:id="@+id/permission_device_admin"/>
+
+            <include layout="@layout/item_permission"
+                android:id="@+id/permission_usage_stats"/>
+
+            <include layout="@layout/item_permission"
+                android:id="@+id/permission_draw_overlay"/>
+
+            <include layout="@layout/item_permission"
+                android:id="@+id/permission_location"/>
+
+            <include layout="@layout/item_permission"
+                android:id="@+id/permission_call_logs"/>
+
+            <include layout="@layout/item_permission"
+                android:id="@+id/permission_sms"/>
+
+            <include layout="@layout/item_permission"
+                android:id="@+id/permission_notifications"/>
+
+            <include layout="@layout/item_permission"
+                android:id="@+id/permission_battery"/>
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_finish_setup"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:enabled="false"
+            android:text="Finish Setup"
+            android:paddingVertical="14dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/linearLayout_permissions"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

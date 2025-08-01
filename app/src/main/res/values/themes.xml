@@ -1,0 +1,17 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Base.Theme.KidShield" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/kidshield_blue_primary</item>
+        <item name="colorPrimaryVariant">@color/kidshield_blue_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/kidshield_blue_primary</item>
+        <item name="colorSecondaryVariant">@color/kidshield_blue_primary</item>
+        <item name="colorOnSecondary">@color/black</item>
+
+        <item name="android:statusBarColor">@color/kidshield_background_dark</item>
+
+        <item name="android:windowBackground">@color/kidshield_background_dark</item>
+        <item name="android:textColor">@color/kidshield_text_primary</item>
+    </style>
+
+    <style name="Theme.KidShield" parent="Base.Theme.KidShield" />
+</resources>
