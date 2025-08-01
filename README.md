@@ -136,6 +136,3 @@ We welcome all contributions! Feel free to:
 * Create pull requests to fix bugs or add features
 
 ---
-
-Happy Monitoring! 🚀
->>>>>>> 99710f204672bd021b997256b9dc297412cee5b0
