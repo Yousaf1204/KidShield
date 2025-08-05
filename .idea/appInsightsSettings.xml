@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.yousafdev.KidShield" />
-                  <option name="mobileSdkAppId" value="1:162108907800:android:214f0f03c33d910f55fe6d" />
-                  <option name="projectId" value="nyanew-928f4" />
-                  <option name="projectNumber" value="162108907800" />
+                  <option name="appId" value="PLACEHOLDER" />
+                  <option name="mobileSdkAppId" value="" />
+                  <option name="projectId" value="" />
+                  <option name="projectNumber" value="" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

@@ -2,25 +2,21 @@ package com.yousafdev.KidShield.Services;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.app.usage.UsageStats;
-import android.app.usage.UsageStatsManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.provider.CallLog;
 import android.provider.Telephony;
 import android.util.Log;
@@ -41,7 +37,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.yousafdev.KidShield.Activities.BlockedScreenActivity;
 import com.yousafdev.KidShield.R;
-import com.yousafdev.KidShield.Utils.AlarmReceiver;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -49,31 +44,22 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class MonitoringService extends Service {
-
-    // TODO - add screen locking functionality
 
     private static final String TAG = "MonitoringService";
     public static final String CHANNEL_ID = "KidShieldServiceChannel";
     public static final int NOTIFICATION_ID = 1;
 
-    // Action for the intent that triggers data sync
     public static final String ACTION_SYNC_DATA = "com.yousafdev.KidShield.ACTION_SYNC_DATA";
-
-    private Handler handler = new Handler();
-    private Runnable appCheckRunnable;
-    private static final long APP_CHECK_INTERVAL = 2000;      // 2 seconds for app blocking check
 
     private FusedLocationProviderClient fusedLocationClient;
     private DatabaseReference databaseReference;
     private FirebaseUser currentUser;
 
-    private UsageStatsManager usageStatsManager;
     private HashSet<String> blockedApps = new HashSet<>();
     private String lastForegroundApp = "";
+    private AppEventReceiver appEventReceiver;
 
     @Override
     public void onCreate() {
@@ -81,7 +67,6 @@ public class MonitoringService extends Service {
         Log.d(TAG, "Service Created");
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        usageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if (currentUser == null) {
@@ -93,12 +78,11 @@ public class MonitoringService extends Service {
         databaseReference = FirebaseDatabase.getInstance().getReference("users")
                 .child(currentUser.getUid());
 
-        appCheckRunnable = () -> {
-            checkForegroundApp();
-            handler.postDelayed(appCheckRunnable, APP_CHECK_INTERVAL);
-        };
-
         listenForBlockedApps();
+
+        appEventReceiver = new AppEventReceiver();
+        IntentFilter filter = new IntentFilter(AppAccessibilityService.ACTION_FOREGROUND_APP);
+        registerReceiver(appEventReceiver, filter, RECEIVER_EXPORTED);
     }
 
     @Override
@@ -110,7 +94,7 @@ public class MonitoringService extends Service {
                 .setContentTitle("KidShield Protection is Active")
                 .setContentText("Monitoring for your safety.")
                 .setSmallIcon(R.drawable.ic_check)
-                .setPriority(NotificationCompat.PRIORITY_MIN) // Use MIN to be less intrusive
+                .setPriority(NotificationCompat.PRIORITY_MIN)
                 .setOngoing(true)
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
                 .build();
@@ -122,18 +106,11 @@ public class MonitoringService extends Service {
             startForeground(NOTIFICATION_ID, notification);
         }
 
-        // Start the continuous app check loop
-        handler.removeCallbacks(appCheckRunnable);
-        handler.post(appCheckRunnable);
-
-        // Check if the intent is for a data sync
         if (intent != null && ACTION_SYNC_DATA.equals(intent.getAction())) {
             Log.d(TAG, "Received data sync request from AlarmManager.");
             performDataSync();
         }
 
-        // We want this service to continue running until it is explicitly stopped,
-        // so we return START_STICKY.
         return START_STICKY;
     }
 
@@ -145,7 +122,6 @@ public class MonitoringService extends Service {
         fetchAndUploadInstalledApps();
     }
 
-
     private void listenForBlockedApps() {
         databaseReference.child("blocked_apps").addValueEventListener(new ValueEventListener() {
             @Override
@@ -153,8 +129,6 @@ public class MonitoringService extends Service {
                 blockedApps.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     if (Boolean.TRUE.equals(snapshot.getValue(Boolean.class))) {
-                        // Firebase keys cannot contain '.', so we replace them with '_' when storing.
-                        // We must revert this change when retrieving.
                         blockedApps.add(snapshot.getKey().replace("_", "."));
                     }
                 }
@@ -168,46 +142,25 @@ public class MonitoringService extends Service {
         });
     }
 
-    private void checkForegroundApp() {
-        if (usageStatsManager == null) return;
+    private void checkForegroundApp(String currentApp) {
+        if (!currentApp.equals(lastForegroundApp) && blockedApps.contains(currentApp)) {
+            Log.d(TAG, "Blocked app detected in foreground: " + currentApp);
 
-        long time = System.currentTimeMillis();
-        // We query for events in the last 10 seconds.
-        List<UsageStats> appList = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 1000 * 10, time);
-
-        if (appList != null && !appList.isEmpty()) {
-            SortedMap<Long, UsageStats> mySortedMap = new TreeMap<>();
-            for (UsageStats usageStats : appList) {
-                mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
-            }
-            if (!mySortedMap.isEmpty()) {
-                String currentApp = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
-
-                // If the foreground app has changed and is in our blocked list
-                if (!currentApp.equals(lastForegroundApp) && blockedApps.contains(currentApp)) {
-                    Log.d(TAG, "Blocked app detected in foreground: " + currentApp);
-
-                    // Launch the block screen
-                    Intent intent = new Intent(getApplicationContext(), BlockedScreenActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(intent);
-                }
-                lastForegroundApp = currentApp;
-            }
+            Intent intent = new Intent(getApplicationContext(), BlockedScreenActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
         }
+        lastForegroundApp = currentApp;
     }
 
     private void fetchAndUploadInstalledApps() {
         PackageManager pm = getPackageManager();
-        // Get a list of all installed applications.
         List<ApplicationInfo> apps = pm.getInstalledApplications(PackageManager.GET_META_DATA);
         DatabaseReference appsRef = databaseReference.child("installed_apps");
-        appsRef.removeValue(); // Clear the list before adding new ones
+        appsRef.removeValue();
 
         for (ApplicationInfo app : apps) {
-            // Check if the application has a launch intent. If not, it's a system app.
             if (pm.getLaunchIntentForPackage(app.packageName) != null) {
-                // We don't want to block our own app
                 if(app.packageName.equals(getPackageName())) {
                     continue;
                 }
@@ -219,7 +172,6 @@ public class MonitoringService extends Service {
                 appData.put("appName", appName);
                 appData.put("packageName", packageName);
 
-                // Firebase keys can't contain '.', so we replace them.
                 appsRef.child(packageName.replace(".", "_")).setValue(appData);
             }
         }
@@ -250,7 +202,7 @@ public class MonitoringService extends Service {
 
     private void fetchAndUploadCallLogs() {
         DatabaseReference callLogsRef = databaseReference.child("data/call_logs");
-        callLogsRef.removeValue(); // Clear old logs
+        callLogsRef.removeValue();
 
         try (Cursor cursor = getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, CallLog.Calls.DATE + " DESC")) {
             if (cursor == null) return;
@@ -280,7 +232,7 @@ public class MonitoringService extends Service {
 
     private void fetchAndUploadSmsLogs() {
         DatabaseReference smsLogsRef = databaseReference.child("data/sms_logs");
-        smsLogsRef.removeValue(); // Clear old logs
+        smsLogsRef.removeValue();
 
         try (Cursor cursor = getContentResolver().query(Telephony.Sms.CONTENT_URI, null, null, null, Telephony.Sms.DATE + " DESC")) {
             if (cursor == null) return;
@@ -337,8 +289,7 @@ public class MonitoringService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "Service Destroyed");
-        // Stop the app check loop
-        handler.removeCallbacks(appCheckRunnable);
+        unregisterReceiver(appEventReceiver);
     }
 
     private void createNotificationChannel() {
@@ -346,7 +297,7 @@ public class MonitoringService extends Service {
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
                     "KidShield Service Channel",
-                    NotificationManager.IMPORTANCE_DEFAULT // Default importance is fine
+                    NotificationManager.IMPORTANCE_DEFAULT
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
             if (manager != null) {
@@ -359,5 +310,17 @@ public class MonitoringService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private class AppEventReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (AppAccessibilityService.ACTION_FOREGROUND_APP.equals(intent.getAction())) {
+                String packageName = intent.getStringExtra(AppAccessibilityService.EXTRA_PACKAGE_NAME);
+                if (packageName != null) {
+                    checkForegroundApp(packageName);
+                }
+            }
+        }
     }
 }
