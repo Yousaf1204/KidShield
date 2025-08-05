@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">KidShield</string>
+    <string name="accessibility_service_description">KidShield uses this service to monitor which app is currently open, allowing it to block apps selected by the parent for your safety.</string>
 </resources>

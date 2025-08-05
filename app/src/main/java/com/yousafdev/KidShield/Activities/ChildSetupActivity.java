@@ -1,6 +1,7 @@
 package com.yousafdev.KidShield.Activities;
 
 import android.Manifest;
+import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,25 +12,23 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.view.View;
+import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-
 import com.yousafdev.KidShield.R;
+import com.yousafdev.KidShield.Services.AppAccessibilityService;
 import com.yousafdev.KidShield.Services.MonitoringService;
-import com.yousafdev.KidShield.Utils.BootReceiver; // Import BootReceiver
+import com.yousafdev.KidShield.Utils.BootReceiver;
 import com.yousafdev.KidShield.Utils.MyDeviceAdminReceiver;
-
 import java.util.Map;
 
-// Helper class to manage each permission item's view
 class PermissionViewHolder {
     View layout;
     ImageView statusIcon;
@@ -51,10 +50,9 @@ class PermissionViewHolder {
     }
 }
 
-
 public class ChildSetupActivity extends AppCompatActivity {
 
-    private PermissionViewHolder admin, usage, overlay, location, call, sms, notifications, battery;
+    private PermissionViewHolder admin, usage, overlay, location, call, sms, notifications, battery, accessibility;
     private Button finishButton;
 
     private DevicePolicyManager dpm;
@@ -64,9 +62,7 @@ public class ChildSetupActivity extends AppCompatActivity {
             registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), this::onPermissionsResult);
 
     private final ActivityResultLauncher<Intent> requestSettingLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                checkAllPermissions();
-            });
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> checkAllPermissions());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +91,7 @@ public class ChildSetupActivity extends AppCompatActivity {
         sms = new PermissionViewHolder(findViewById(R.id.permission_sms));
         notifications = new PermissionViewHolder(findViewById(R.id.permission_notifications));
         battery = new PermissionViewHolder(findViewById(R.id.permission_battery));
+        accessibility = new PermissionViewHolder(findViewById(R.id.permission_accessibility));
         finishButton = findViewById(R.id.button_finish_setup);
 
         admin.title.setText("Device Administrator (for Screen Lock)");
@@ -105,15 +102,20 @@ public class ChildSetupActivity extends AppCompatActivity {
         sms.title.setText("SMS Access (for Monitoring)");
         notifications.title.setText("Notifications (for Service Stability)");
         battery.title.setText("Disable Battery Optimization");
+        accessibility.title.setText("Accessibility Service (for Faster App Monitoring)");
     }
 
     private void setupClickListeners() {
         admin.enableButton.setOnClickListener(v -> requestDeviceAdmin());
         usage.enableButton.setOnClickListener(v -> requestUsageStats());
         overlay.enableButton.setOnClickListener(v -> requestOverlay());
-        location.enableButton.setOnClickListener(v -> requestStandardPermissions(
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}
-        ));
+        location.enableButton.setOnClickListener(v -> {
+            if (!isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                requestStandardPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION});
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !isPermissionGranted(Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
+                requestStandardPermissions(new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION});
+            }
+        });
         call.enableButton.setOnClickListener(v -> requestStandardPermissions(
                 new String[]{Manifest.permission.READ_CALL_LOG}
         ));
@@ -122,9 +124,9 @@ public class ChildSetupActivity extends AppCompatActivity {
         ));
         notifications.enableButton.setOnClickListener(v -> requestNotificationPermission());
         battery.enableButton.setOnClickListener(v -> requestIgnoreBatteryOptimizations());
+        accessibility.enableButton.setOnClickListener(v -> requestAccessibilityService());
 
         finishButton.setOnClickListener(v -> {
-            // Start the service and schedule the alarm.
             Intent serviceIntent = new Intent(this, MonitoringService.class);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(serviceIntent);
@@ -132,7 +134,6 @@ public class ChildSetupActivity extends AppCompatActivity {
                 startService(serviceIntent);
             }
 
-            // Schedule the data sync alarm
             BootReceiver.scheduleDataSync(this);
 
             startActivity(new Intent(this, ChildDashboardActivity.class));
@@ -144,16 +145,19 @@ public class ChildSetupActivity extends AppCompatActivity {
         if (dpm.isAdminActive(compName)) admin.setGranted();
         if (isUsageStatsAllowed()) usage.setGranted();
         if (Settings.canDrawOverlays(this)) overlay.setGranted();
-        if (isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)) location.setGranted();
+        if (isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION) && (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || isPermissionGranted(Manifest.permission.ACCESS_BACKGROUND_LOCATION))) {
+            location.setGranted();
+        }
         if (isPermissionGranted(Manifest.permission.READ_CALL_LOG)) call.setGranted();
         if (isPermissionGranted(Manifest.permission.READ_SMS)) sms.setGranted();
         if (isNotificationPermissionGranted()) notifications.setGranted();
         if (isIgnoringBatteryOptimizations()) battery.setGranted();
+        if (isAccessibilityServiceEnabled(this)) accessibility.setGranted();
 
-        // Check if all permissions are granted to enable the finish button
         if (dpm.isAdminActive(compName) && isUsageStatsAllowed() && Settings.canDrawOverlays(this) &&
-                isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION) && isPermissionGranted(Manifest.permission.READ_CALL_LOG) &&
-                isPermissionGranted(Manifest.permission.READ_SMS) && isNotificationPermissionGranted() && isIgnoringBatteryOptimizations()) {
+                isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION) && (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || isPermissionGranted(Manifest.permission.ACCESS_BACKGROUND_LOCATION)) &&
+                isPermissionGranted(Manifest.permission.READ_CALL_LOG) &&
+                isPermissionGranted(Manifest.permission.READ_SMS) && isNotificationPermissionGranted() && isIgnoringBatteryOptimizations() && isAccessibilityServiceEnabled(this)) {
             finishButton.setEnabled(true);
         }
     }
@@ -191,6 +195,11 @@ public class ChildSetupActivity extends AppCompatActivity {
         requestSettingLauncher.launch(intent);
     }
 
+    private void requestAccessibilityService() {
+        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+        requestSettingLauncher.launch(intent);
+    }
+
     private void onPermissionsResult(Map<String, Boolean> grants) {
         checkAllPermissions();
     }
@@ -219,5 +228,15 @@ public class ChildSetupActivity extends AppCompatActivity {
     private boolean isIgnoringBatteryOptimizations() {
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         return pm.isIgnoringBatteryOptimizations(getPackageName());
+    }
+
+    public static boolean isAccessibilityServiceEnabled(Context context) {
+        AccessibilityManager am = (AccessibilityManager) context.getSystemService(Context.ACCESSIBILITY_SERVICE);
+        if (am == null) {
+            return false;
+        }
+        return am.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
+                .stream()
+                .anyMatch(service -> service.getId().equals(context.getPackageName() + "/.Services.AppAccessibilityService"));
     }
 }
