@@ -1,1 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KidShield — Android Parental Control</title>
+  <link rel="icon" href="https://img.icons8.com/color/96/000000/child-safe-zone.png" />
+  <style>
+    :root {
+      --primary: #2196f3;
+      --background-dark: #121212;
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+      --accent: #64b5f6;
+      font-family: 'Inter', 'Roboto', sans-serif;
+    }
 
+    body {
+      margin: 0;
+      background: var(--background-dark);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    header {
+      text-align: center;
+      padding: 3rem 1rem;
+      background: var(--primary);
+      color: #fff;
+      border-bottom: 4px solid var(--accent);
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin: 0.5rem 0;
+    }
+
+    header p {
+      color: #e0e0e0;
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    main {
+      max-width: 900px;
+      margin: auto;
+      padding: 2rem 1.5rem;
+    }
+
+    h2 {
+      color: var(--accent);
+      border-left: 4px solid var(--primary);
+      padding-left: 10px;
+      margin-top: 2.5rem;
+    }
+
+    pre {
+      background: #1e1e1e;
+      color: #c5c5c5;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+
+    code {
+      color: #80cbc4;
+    }
+
+    .features {
+      display: grid;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .feature {
+      background: #1a1a1a;
+      border: 1px solid #2c2c2c;
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+    }
+
+    .feature h3 {
+      margin: 0 0 0.5rem 0;
+      color: var(--accent);
+    }
+
+    .screenshots img {
+      width: 100%;
+      max-width: 420px;
+      border-radius: 12px;
+      margin: 0.5rem;
+      border: 2px solid #333;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      border-top: 1px solid #333;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>KidShield</h1>
+    <p>Android Parental Control Application — monitor, protect, and guide your child's digital experience.</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>⚠️ Educational Use Only</h2>
+      <p>
+        KidShield is intended <b>for educational purposes only</b> — to demonstrate advanced Android concepts
+        such as persistent background services, permissions, and Firebase integration.
+        Do not use this app for unlawful or unethical monitoring. Use only on devices you own or have explicit permission to monitor.
+      </p>
+    </section>
+
+    <section>
+      <h2>✨ Features</h2>
+      <div class="features">
+        <div class="feature"><h3>📍 Real-time Location Tracking</h3>Receive frequent location updates and visualize the child’s position on an interactive map.</div>
+        <div class="feature"><h3>🔒 App Blocker</h3>Remotely view and block/unblock apps on the child’s device.</div>
+        <div class="feature"><h3>📞 Call & SMS Logs</h3>Securely access recent communication logs to stay informed.</div>
+        <div class="feature"><h3>⚙️ Persistent Service</h3>Runs in the background as a foreground service resistant to termination.</div>
+        <div class="feature"><h3>🔁 Auto-Restart</h3>Automatically restarts after device reboot to maintain protection.</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>🚀 Architecture Overview</h2>
+      <p>
+        Built using a modern hybrid architecture optimized for reliability and battery efficiency:
+      </p>
+      <ul>
+        <li><b>Foreground Service:</b> Runs every 2 seconds to detect blocked apps.</li>
+        <li><b>AlarmManager:</b> Performs periodic sync (location, SMS, call logs) every 1–5 minutes.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>🖼️ Screenshots</h2>
+      <div class="screenshots">
+        <img src="https://via.placeholder.com/420x250?text=Parent+Dashboard" alt="Parent Dashboard">
+        <img src="https://via.placeholder.com/420x250?text=Child+Detail+View" alt="Child Detail View">
+        <img src="https://via.placeholder.com/420x250?text=App+Blocker" alt="App Blocker">
+      </div>
+    </section>
+
+    <section>
+      <h2>📖 Project Setup Guide</h2>
+      <h3>✅ Step 1: Clone Repository</h3>
+      <pre><code>git clone https://github.com/Yousaf1204/KidShield.git
+cd KidShield</code></pre>
+
+      <h3>✅ Step 2: Firebase Setup</h3>
+      <p>1. Create a new project in <a href="https://console.firebase.google.com">Firebase Console</a>.<br>
+         2. Enable Email/Password Authentication.<br>
+         3. Set Realtime Database rules:</p>
+
+      <pre><code>{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    }
+  }
+}</code></pre>
+
+      <p>4. Register Android app with package name <code>com.yousafdev.KidShield</code>  
+         5. Place <code>google-services.json</code> in <code>KidShield/app/</code></p>
+
+      <h3>✅ Step 3: Google Maps API Key</h3>
+      <p>Add to <code>AndroidManifest.xml</code>:</p>
+      <pre><code>&lt;meta-data
+    android:name="com.google.android.geo.API_KEY"
+    android:value="YOUR_API_KEY_HERE" /&gt;
+</code></pre>
+
+      <h3>✅ Step 4: Build & Run</h3>
+      <ul>
+        <li>Connect your Android device</li>
+        <li>Run from Android Studio</li>
+        <li>Register as parent and child to explore all features</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>📝 License</h2>
+      <p>This project is licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.</p>
+    </section>
+
+    <section>
+      <h2>📈 Contributing</h2>
+      <p>We welcome contributions! Submit issues, suggest improvements, or create pull requests to fix bugs or add features.</p>
+    </section>
+  </main>
+
+  <footer>
+    © 2025 KidShield Project — Built for learning and digital safety awareness.
+  </footer>
+</body>
+</html>
