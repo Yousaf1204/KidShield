@@ -120,10 +120,9 @@ cd KidShield
 * Register as a parent and child to explore all features
 
 ---
-
 ## 📝 License
-
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [Yousaf Open License (YOL)](LICENSE).
+Please provide credit and link back to this repository when using or modifying the code.
 
 ---
 
