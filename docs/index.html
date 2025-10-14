@@ -1,174 +1,417 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KidShield — Android Parental Control</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KidShield | Android Parental Control</title>
+  <meta name="description" content="Open-source parental control solution for Android devices" />
   <link rel="icon" href="https://img.icons8.com/color/96/000000/child-safe-zone.png" />
   <style>
-    :root {
-      --primary: #2196f3;
-      --background-dark: #121212;
-      --text-primary: #ffffff;
-      --text-secondary: #b0b0b0;
-      --accent: #64b5f6;
-      font-family: 'Inter', 'Roboto', sans-serif;
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
     }
 
     body {
-      margin: 0;
-      background: var(--background-dark);
-      color: var(--text-primary);
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom right, #1e3a8a, #7c3aed, #ec4899);
+      color: #fff;
+      min-height: 100vh;
       line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 30px;
     }
 
     header {
       text-align: center;
-      padding: 3rem 1rem;
-      background: var(--primary);
-      color: #fff;
-      border-bottom: 4px solid var(--accent);
+      margin-bottom: 80px;
+      animation: fadeIn 1s ease-out;
     }
 
-    header h1 {
-      font-size: 2.5rem;
-      margin: 0.5rem 0;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    header p {
-      color: #e0e0e0;
-      font-size: 1.1rem;
-      max-width: 700px;
-      margin: 0 auto;
+    .logo {
+      font-size: 5rem;
+      margin-bottom: 10px;
+      animation: float 3s ease-in-out infinite;
     }
 
-    main {
-      max-width: 900px;
-      margin: auto;
-      padding: 2rem 1.5rem;
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    h1 {
+      font-size: 4rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+      background: linear-gradient(to right, #fbbf24, #f97316, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tagline {
+      font-size: 1.3rem;
+      opacity: 0.9;
+      font-weight: 300;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      margin-bottom: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     }
 
     h2 {
-      color: var(--accent);
-      border-left: 4px solid var(--primary);
-      padding-left: 10px;
-      margin-top: 2.5rem;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
     }
 
-    pre {
-      background: #1e1e1e;
-      color: #c5c5c5;
-      padding: 1rem;
-      border-radius: 8px;
-      overflow-x: auto;
+    h3 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin: 30px 0 15px;
+      color: #fbbf24;
     }
 
-    code {
-      color: #80cbc4;
+    p {
+      margin-bottom: 20px;
+      opacity: 0.95;
+      font-size: 1.05rem;
+    }
+
+    .warning {
+      background: rgba(239, 68, 68, 0.2);
+      border-left: 4px solid #ef4444;
+      padding: 25px;
+      border-radius: 10px;
+      margin: 25px 0;
     }
 
     .features {
       display: grid;
-      gap: 1rem;
-      margin-top: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin: 30px 0;
     }
 
     .feature {
-      background: #1a1a1a;
-      border: 1px solid #2c2c2c;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .feature:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: scale(1.05);
+    }
+
+    .feature-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      display: block;
+    }
+
+    .feature h4 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #fbbf24;
+    }
+
+    .feature p {
+      font-size: 0.95rem;
+      margin: 0;
+      opacity: 0.9;
+    }
+
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 25px 0;
+    }
+
+    .tech {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .tech:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .code-box {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 20px;
       border-radius: 10px;
-      padding: 1rem 1.5rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin: 20px 0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .feature h3 {
-      margin: 0 0 0.5rem 0;
-      color: var(--accent);
+    .steps {
+      list-style: none;
+      counter-reset: step;
     }
 
-    .screenshots img {
-      width: 100%;
-      max-width: 420px;
-      border-radius: 12px;
-      margin: 0.5rem;
-      border: 2px solid #333;
+    .steps li {
+      counter-increment: step;
+      margin: 20px 0;
+      padding-left: 50px;
+      position: relative;
+    }
+
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: linear-gradient(135deg, #f97316, #ec4899);
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 40px 0;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #f97316, #ec4899);
+      color: #fff;
+      padding: 15px 35px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.05rem;
+      transition: all 0.3s ease;
+      display: inline-block;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #7c3aed, #1e3a8a);
     }
 
     footer {
       text-align: center;
-      padding: 2rem 1rem;
-      border-top: 1px solid #333;
-      color: var(--text-secondary);
-      font-size: 0.9rem;
+      padding: 40px 0;
+      margin-top: 60px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      opacity: 0.8;
     }
 
-    a {
-      color: var(--accent);
+    footer a {
+      color: #fbbf24;
       text-decoration: none;
+      font-weight: 600;
+      transition: opacity 0.3s ease;
     }
-    a:hover {
-      text-decoration: underline;
+
+    footer a:hover {
+      opacity: 0.7;
+    }
+
+    .wave {
+      display: inline-block;
+      animation: wave 2s ease-in-out infinite;
+    }
+
+    @keyframes wave {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(20deg); }
+      75% { transform: rotate(-20deg); }
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      .logo {
+        font-size: 3.5rem;
+      }
+
+      .container {
+        padding: 40px 20px;
+      }
+
+      .card {
+        padding: 25px;
+      }
+
+      h2 {
+        font-size: 1.6rem;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      .buttons {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        text-align: center;
+      }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>KidShield</h1>
-    <p>Android Parental Control Application — monitor, protect, and guide your child's digital experience.</p>
-  </header>
+  <div class="container">
+    <header>
+      <div class="logo">🛡️</div>
+      <h1>KidShield</h1>
+      <p class="tagline">Your open-source Android parental control companion</p>
+    </header>
 
-  <main>
-    <section>
-      <h2>⚠️ Educational Use Only</h2>
-      <p>
-        KidShield is intended <b>for educational purposes only</b> — to demonstrate advanced Android concepts
-        such as persistent background services, permissions, and Firebase integration.
-        Do not use this app for unlawful or unethical monitoring. Use only on devices you own or have explicit permission to monitor.
-      </p>
-    </section>
+    <div class="card">
+      <div class="warning">
+        <h2>⚠️ Educational Purpose</h2>
+        <p>This app is built for learning Android development concepts like background services, Firebase, and permissions. Only use it on devices you own or have permission to monitor. The developers are not responsible for misuse.</p>
+      </div>
+    </div>
 
-    <section>
-      <h2>✨ Features</h2>
+    <div class="card">
+      <h2>✨ What It Does</h2>
       <div class="features">
-        <div class="feature"><h3>📍 Real-time Location Tracking</h3>Receive frequent location updates and visualize the child’s position on an interactive map.</div>
-        <div class="feature"><h3>🔒 App Blocker</h3>Remotely view and block/unblock apps on the child’s device.</div>
-        <div class="feature"><h3>📞 Call & SMS Logs</h3>Securely access recent communication logs to stay informed.</div>
-        <div class="feature"><h3>⚙️ Persistent Service</h3>Runs in the background as a foreground service resistant to termination.</div>
-        <div class="feature"><h3>🔁 Auto-Restart</h3>Automatically restarts after device reboot to maintain protection.</div>
+        <div class="feature">
+          <span class="feature-icon">📍</span>
+          <h4>Location Tracking</h4>
+          <p>See where the device is in real-time on a map</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">🔒</span>
+          <h4>App Blocker</h4>
+          <p>Block and unblock apps remotely</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">📞</span>
+          <h4>Call & SMS Logs</h4>
+          <p>View communication history</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">⚙️</span>
+          <h4>Always Running</h4>
+          <p>Service that stays active in background</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">🔁</span>
+          <h4>Auto Restart</h4>
+          <p>Restarts after phone reboots</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">🔋</span>
+          <h4>Battery Friendly</h4>
+          <p>Optimized to save battery life</p>
+        </div>
       </div>
-    </section>
+    </div>
 
-    <section>
-      <h2>🚀 Architecture Overview</h2>
+    <div class="card">
+      <h2>🏗️ How It Works</h2>
       <p>
-        Built using a modern hybrid architecture optimized for reliability and battery efficiency:
+        KidShield uses a smart combination of Android services to monitor devices efficiently. A foreground service checks every 2 seconds if blocked apps are running, while AlarmManager handles syncing location and logs every few minutes to save battery.
       </p>
-      <ul>
-        <li><b>Foreground Service:</b> Runs every 2 seconds to detect blocked apps.</li>
-        <li><b>AlarmManager:</b> Performs periodic sync (location, SMS, call logs) every 1–5 minutes.</li>
-      </ul>
-    </section>
-
-    <section>
-      <h2>🖼️ Screenshots</h2>
-      <div class="screenshots">
-        <img src="https://via.placeholder.com/420x250?text=Parent+Dashboard" alt="Parent Dashboard">
-        <img src="https://via.placeholder.com/420x250?text=Child+Detail+View" alt="Child Detail View">
-        <img src="https://via.placeholder.com/420x250?text=App+Blocker" alt="App Blocker">
+      <div class="tech-stack">
+        <span class="tech">Foreground Service</span>
+        <span class="tech">AlarmManager</span>
+        <span class="tech">Firebase</span>
+        <span class="tech">Google Maps</span>
+        <span class="tech">WorkManager</span>
+        <span class="tech">MVVM</span>
+        <span class="tech">Kotlin</span>
+        <span class="tech">LiveData</span>
       </div>
-    </section>
+    </div>
 
-    <section>
-      <h2>📖 Project Setup Guide</h2>
-      <h3>✅ Step 1: Clone Repository</h3>
-      <pre><code>git clone https://github.com/Yousaf1204/KidShield.git
-cd KidShield</code></pre>
+    <div class="card">
+      <h2>📸 Screenshots</h2>
+      <p>
+        Want to see what KidShield looks like? Check out all the screenshots and UI previews on the GitHub repository!
+      </p>
+      <div class="buttons">
+        <a class="btn" href="https://github.com/Yousaf1204/KidShield#screenshots" target="_blank">
+          View Screenshots
+        </a>
+      </div>
+    </div>
 
-      <h3>✅ Step 2: Firebase Setup</h3>
-      <p>1. Create a new project in <a href="https://console.firebase.google.com">Firebase Console</a>.<br>
-         2. Enable Email/Password Authentication.<br>
-         3. Set Realtime Database rules:</p>
+    <div class="card">
+      <h2>🚀 Setup Instructions</h2>
+      
+      <h3>What You Need</h3>
+      <div class="tech-stack">
+        <span class="tech">Android Studio</span>
+        <span class="tech">Android Phone</span>
+        <span class="tech">Firebase Account</span>
+        <span class="tech">Google Maps API</span>
+      </div>
 
-      <pre><code>{
+      <h3>Installation Steps</h3>
+      <ol class="steps">
+        <li>Clone the repo from GitHub</li>
+        <li>Create a Firebase project and enable email authentication</li>
+        <li>Set up Firebase Realtime Database with security rules</li>
+        <li>Download google-services.json and put it in the app folder</li>
+        <li>Get a Google Maps API key</li>
+        <li>Add the API key to AndroidManifest.xml</li>
+        <li>Build and run on your Android device</li>
+        <li>Register parent and child accounts</li>
+      </ol>
+
+      <h3>Firebase Rules</h3>
+      <div class="code-box">{
   "rules": {
     "users": {
       "$uid": {
@@ -177,39 +420,42 @@ cd KidShield</code></pre>
       }
     }
   }
-}</code></pre>
+}</div>
 
-      <p>4. Register Android app with package name <code>com.yousafdev.KidShield</code>  
-         5. Place <code>google-services.json</code> in <code>KidShield/app/</code></p>
-
-      <h3>✅ Step 3: Google Maps API Key</h3>
-      <p>Add to <code>AndroidManifest.xml</code>:</p>
-      <pre><code>&lt;meta-data
+      <h3>API Key Setup</h3>
+      <div class="code-box">&lt;meta-data
     android:name="com.google.android.geo.API_KEY"
-    android:value="YOUR_API_KEY_HERE" /&gt;
-</code></pre>
+    android:value="YOUR_API_KEY_HERE" /&gt;</div>
+    </div>
 
-      <h3>✅ Step 4: Build & Run</h3>
-      <ul>
-        <li>Connect your Android device</li>
-        <li>Run from Android Studio</li>
-        <li>Register as parent and child to explore all features</li>
-      </ul>
-    </section>
+    <div class="card">
+      <h2>📄 License & Contributing</h2>
+      <p>
+        This project uses the Yousaf Open License (YOL). Feel free to use it, but please give credit and link back to the original repo.
+      </p>
+      <p>
+        Found a bug? Have an idea? Contributions are welcome! Open an issue or submit a pull request on GitHub.
+      </p>
+      
+      <div class="buttons">
+        <a class="btn" href="https://github.com/Yousaf1204/KidShield" target="_blank">
+          GitHub Repo
+        </a>
+        <a class="btn btn-secondary" href="https://yousafdev.xyz/" target="_blank">
+          Contact Me
+        </a>
+      </div>
+    </div>
 
-    <section>
-      <h2>📝 License</h2>
-      <p>This project is licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.</p>
-    </section>
-
-    <section>
-      <h2>📈 Contributing</h2>
-      <p>We welcome contributions! Submit issues, suggest improvements, or create pull requests to fix bugs or add features.</p>
-    </section>
-  </main>
-
-  <footer>
-    © 2025 KidShield Project — Built for learning and digital safety awareness.
-  </footer>
+    <footer>
+      <p>
+        Made with <span class="wave">❤️</span> by 
+        <a href="https://yousafdev.xyz/" target="_blank">Yousaf</a>
+      </p>
+      <p style="margin-top: 10px; font-size: 0.9rem;">
+        © 2025 KidShield — Educational Project
+      </p>
+    </footer>
+  </div>
 </body>
 </html>
