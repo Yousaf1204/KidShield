@@ -40,7 +40,7 @@ KidShield is built using a modern hybrid architecture optimized for reliability 
 
 ## 📱 Website
 
-**https://kidsheild.yousafdev.xyz/**
+**https://KidShield.yousafdev.xyz/**
 
 ## 🖼️ Screenshots
 
