@@ -125,8 +125,8 @@ cd KidShield
 
 ---
 ## 📝 License
-This project is licensed under the [Yousaf Open License (YOL)](LICENSE).
-Please provide credit and link back to this repository when using or modifying the code.
+This project is licensed under the [MIT)](LICENSE).
+Please provide credit and link back to this repository when using or modifying the code. If possible.
 
 ---
 
