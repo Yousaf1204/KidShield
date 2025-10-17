@@ -1,5 +1,4 @@
-Yousaf Open License (YOL)
-Version 1.0, 2025
+MIT License
 
 Copyright (c) 2025 Yousaf
 
@@ -10,49 +9,13 @@ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-1. ATTRIBUTION
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-   The above copyright notice and this permission notice shall be included in
-   all copies or substantial portions of the Software.
-   
-   All redistributions must include the following attribution in documentation
-   or user-facing materials:
-   
-   "Based on KidShield by Yousaf (https://github.com/Yousaf1204/KidShield)"
-
-2. LAWFUL USE
-
-   This Software is designed for lawful parental supervision purposes only.
-   
-   Users must:
-   - Obtain explicit consent from all monitored parties, except when monitoring
-     minor children under their legal guardianship
-   - Comply with all applicable laws including privacy, data protection, and
-     wiretapping regulations in their jurisdiction
-   
-   The Software must not be used for:
-   - Unauthorized surveillance or monitoring of any individual
-   - Any illegal, unethical, or malicious purpose
-   - Violating privacy rights or applicable laws
-
-3. USER RESPONSIBILITY
-
-   By using this Software, you acknowledge that you are solely responsible for
-   ensuring compliance with all applicable laws and regulations. You agree to
-   indemnify and hold harmless the author from any claims, damages, or legal
-   actions arising from your use of the Software.
-
-4. TERMINATION
-
-   Your rights under this license terminate automatically if you fail to comply
-   with any of its terms.
-
-5. DISCLAIMER OF WARRANTY
-
-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-   THE SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
