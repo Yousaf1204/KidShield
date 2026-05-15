@@ -117,6 +117,9 @@ cd KidShield
     android:value="YOUR_API_KEY_HERE" />
 ```
 
+⚠️ Only replace YOUR_API_KEY_HERE with your actual API key.
+Do NOT modify com.google.android.geo.API_KEY.
+
 ### ✅ Step 4: Build & Run
 
 * Connect your Android device
