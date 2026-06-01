@@ -128,8 +128,7 @@ Do NOT modify com.google.android.geo.API_KEY.
 
 ---
 ## 📝 License
-This project is licensed under the [MIT)](LICENSE).
-Please provide credit and link back to this repository when using or modifying the code. If possible.
+This project is licensed under the MIT License. See LICENSE for details.
 
 ---
 
